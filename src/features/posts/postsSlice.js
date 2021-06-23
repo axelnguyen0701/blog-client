@@ -29,7 +29,9 @@ export const postsSlice = createSlice({
     [fetchPosts.fulfilled]: (state, action) => {
       state.status = "succeeded";
 
-      state.posts = state.posts.concat(action.payload);
+      const filteredPostList = action.payload.filter((post) => post.published);
+
+      state.posts = state.posts.concat(filteredPostList);
     },
     [fetchPosts.rejected]: (state, action) => {
       state.status = "failed";

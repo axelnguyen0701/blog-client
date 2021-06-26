@@ -14,6 +14,7 @@ import SignUpForm from "./SignUpForm";
 import LogInForm from "./LogInForm";
 import UserList from "./Users/UserList";
 import UserShow from "./Users/UserShow";
+import EditPostForm from "./Posts/EditPostForm";
 class App extends React.Component {
   render() {
     return (
@@ -36,6 +37,11 @@ class App extends React.Component {
               <Route exact path="/users" component={UserList} />
               <Route exact path="/posts/new" component={NewPostForm} />
               <Route exact path="/posts/:postId" component={SinglePost} />
+              <Route
+                exact
+                path="/posts/:postId/edit"
+                component={EditPostForm}
+              />
               <Route exact path="/users/:userId" component={UserShow} />
 
               <Redirect to="/" />

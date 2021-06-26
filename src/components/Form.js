@@ -33,6 +33,7 @@ export const TextAreaAdapter = ({ input, meta, ...rest }) => (
       {...rest}
       onChange={(event) => input.onChange(event.target.value)}
       isInvalid={meta.touched && meta.error}
+      style={{ height: "40vh" }}
     />
     <Form.Control.Feedback type="invalid">{meta.error}</Form.Control.Feedback>
   </>

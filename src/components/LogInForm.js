@@ -4,12 +4,20 @@ import { Form as FormWrapper, Field } from "react-final-form";
 import { Form, Button } from "react-bootstrap";
 import { useHistory } from "react-router";
 import client from "../apis/client";
+import { userLoggedIn } from "../features/users/usersSlice";
+import { useDispatch, useSelector } from "react-redux";
 const required = (value) => (value ? undefined : "Required");
-
 //eslint-disable-next-line
 export default () => {
   const history = useHistory();
   const [errors, setErrors] = useState("");
+
+  const dispatch = useDispatch();
+  const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
+  if (userLoggedInStatus) {
+    return <div>Already Logged In</div>;
+  }
+
   const onSubmit = async ({ username, password }) => {
     if (!username) return { username: "Required" };
     if (!password) return { password: "Required" };
@@ -21,6 +29,7 @@ export default () => {
       };
       const res = await client.post("/auth/login", requestData);
       localStorage.setItem("user_token", res.data.token);
+      dispatch(userLoggedIn({ loggedIn: true }));
       history.push("/");
     } catch (error) {
       if (error.response) {

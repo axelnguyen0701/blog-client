@@ -6,9 +6,17 @@ import { fetchPosts } from "../../features/posts/postsSlice";
 //eslint-disable-next-line
 export default (props) => {
   const posts = useSelector((state) => state.posts.posts);
+  let renderedPost = [];
   const dispatch = useDispatch();
 
   const postStatus = useSelector((state) => state.posts.status);
+  const userStatus = useSelector((state) => state.users.loggedIn);
+
+  if (!userStatus) {
+    renderedPost = posts.filter((post) => post.published);
+  } else {
+    renderedPost = posts;
+  }
 
   useEffect(() => {
     if (postStatus === "idle") {
@@ -16,13 +24,13 @@ export default (props) => {
     }
   }, [postStatus, dispatch]);
 
-  const renderedPostsTab = posts.map((post, index) => (
+  const renderedPostsTab = renderedPost.map((post, index) => (
     <ListGroup.Item action key={post._id} href={`#${index}`}>
       {post.title}
     </ListGroup.Item>
   ));
 
-  const renderedPostsContent = posts.map((post, index) => {
+  const renderedPostsContent = renderedPost.map((post, index) => {
     return (
       <Tab.Pane key={post._id} eventKey={`#${index}`}>
         <Link to={post.url} className="display-4">

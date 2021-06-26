@@ -5,6 +5,7 @@ const initialState = {
   users: [],
   status: "idle",
   error: null,
+  loggedIn: false,
 };
 
 export const fetchUsers = createAsyncThunk("posts/fetchUsers", async () => {
@@ -20,10 +21,12 @@ export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    userAdded: {
-      reducer(state, action) {
-        state.users.push(action.payload);
-      },
+    userLoggedIn(state, action) {
+      if (!action.payload.loggedIn) {
+        state.status = "idle";
+        state.users = [];
+      }
+      state.loggedIn = action.payload.loggedIn;
     },
   },
   extraReducers: {
@@ -42,4 +45,5 @@ export const usersSlice = createSlice({
   },
 });
 
+export const { userLoggedIn, userLoggedOut } = usersSlice.actions;
 export default usersSlice.reducer;

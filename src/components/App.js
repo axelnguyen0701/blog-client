@@ -5,11 +5,15 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import PostList from "./PostList";
+import PostList from "./Posts/PostList";
 import NavBar from "./Navbar";
 import { Container } from "react-bootstrap";
-import BlogShow from "./SinglePost";
-import NewPostForm from "./NewPostForm";
+import SinglePost from "./Posts/SinglePost";
+import NewPostForm from "./Posts/NewPostForm";
+import SignUpForm from "./SignUpForm";
+import LogInForm from "./LogInForm";
+import UserList from "./Users/UserList";
+import UserShow from "./Users/UserShow";
 class App extends React.Component {
   render() {
     return (
@@ -27,8 +31,12 @@ class App extends React.Component {
                   </>
                 )}
               />
+              <Route exact path="/sign-up" component={SignUpForm} />
+              <Route exact path="/log-in" component={LogInForm} />
+              <Route exact path="/users" component={UserList} />
               <Route exact path="/posts/new" component={NewPostForm} />
-              <Route exact path="/posts/:postId" component={BlogShow} />
+              <Route exact path="/posts/:postId" component={SinglePost} />
+              <Route exact path="/users/:userId" component={UserShow} />
 
               <Redirect to="/" />
             </Switch>

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ListGroup, Col, Tab, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts } from "../features/posts/postsSlice";
+import { fetchPosts } from "../../features/posts/postsSlice";
 //eslint-disable-next-line
 export default (props) => {
   const posts = useSelector((state) => state.posts.posts);

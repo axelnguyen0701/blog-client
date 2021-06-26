@@ -14,6 +14,15 @@ export default () => {
           <Link to="/posts/new" className="nav-link">
             New Post
           </Link>
+          <Link to="/sign-up" className="nav-link">
+            Sign-up
+          </Link>
+          <Link to="/log-in" className="nav-link">
+            Log-in
+          </Link>
+          <Link to="/users" className="nav-link">
+            Users
+          </Link>
         </Nav>
       </Container>
     </Navbar>

@@ -16,8 +16,7 @@ export const editPost = createAsyncThunk(
   "posts/editPost",
   async (editedPost) => {
     const { id, ...data } = editedPost;
-    await client.put(`/posts/${id}`, data);
-    const res = await client.get(`/posts/${id}`);
+    const res = await client.put(`/posts/${id}`, data);
     return res.data;
   }
 );

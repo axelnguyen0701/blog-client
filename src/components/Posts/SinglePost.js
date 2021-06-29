@@ -13,6 +13,7 @@ export default ({ match }) => {
   const post = useSelector((state) =>
     state.posts.posts.find((post) => post.id === postId)
   );
+  const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
   //   const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
 
   const onDeleteClick = () => {
@@ -32,12 +33,17 @@ export default ({ match }) => {
     <section>
       <article className="post">
         <h2>{post.title}</h2>
-        <Link to={`${post.url}/edit`} className="btn btn-primary mr-2">
-          Edit
-        </Link>
-        <Button variant="danger" onClick={onDeleteClick}>
-          Delete
-        </Button>
+        {userLoggedInStatus ? (
+          <div className="mt-2">
+            <Link to={`${post.url}/edit`} className="btn btn-primary mr-2">
+              Edit
+            </Link>
+            <Button variant="danger" onClick={onDeleteClick}>
+              Delete
+            </Button>
+          </div>
+        ) : null}
+
         <p>{post.content}</p>
       </article>
     </section>

@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { InputAdapter, TextAreaAdapter, ToggleAdapter } from "../Form";
 import { Form as FormWrapper, Field } from "react-final-form";
 import { Form, Button } from "react-bootstrap";
-import client from "../../apis/client";
+import { useDispatch, useSelector } from "react-redux";
+import { editPost } from "../../features/posts/postsSlice";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
 const required = (value) => (value ? undefined : "Required");
 //eslint-disable-next-line
 export default ({ match }) => {
   const { postId } = match.params;
+  const history = useHistory();
+  const dispatch = useDispatch();
   const post = useSelector((state) =>
     state.posts.posts.find((post) => post.id === postId)
   );
@@ -20,23 +22,19 @@ export default ({ match }) => {
       </section>
     );
   }
-  const history = useHistory();
   const [published, setPublished] = useState(false);
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     if (!values.title) return { title: "Required" };
     if (!values.content) return { content: "Required" };
     const requestData = {
       title: values.title,
       content: values.content,
       published: published,
+      id: postId,
     };
-    try {
-      await client.put(`/posts/${postId}`, requestData);
-      history.push("/");
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(editPost(requestData));
+    history.push("/posts/" + postId);
   };
 
   return (

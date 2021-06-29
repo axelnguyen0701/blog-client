@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { InputAdapter, TextAreaAdapter, ToggleAdapter } from "../Form";
 import { Form as FormWrapper, Field } from "react-final-form";
 import { Form, Button } from "react-bootstrap";
-import client from "../../apis/client";
 import { useHistory } from "react-router";
-
+import { useDispatch } from "react-redux";
+import { createPost } from "../../features/posts/postsSlice";
 const required = (value) => (value ? undefined : "Required");
 //eslint-disable-next-line
 export default () => {
   let history = useHistory();
+  const dispatch = useDispatch();
   const [published, setPublished] = useState(false);
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     if (!values.title) return { title: "Required" };
     if (!values.content) return { content: "Required" };
     const requestData = {
@@ -19,12 +20,8 @@ export default () => {
       content: values.content,
       published: published,
     };
-    try {
-      await client.post("/posts", requestData);
-      history.push("/");
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(createPost(requestData));
+    history.push("/");
   };
 
   return (

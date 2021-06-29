@@ -12,7 +12,7 @@ export default ({ match }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const post = useSelector((state) =>
-    state.posts.posts.find((post) => post.id === postId)
+    state.posts.posts.find((post) => post._id === postId)
   );
 
   if (!post) {

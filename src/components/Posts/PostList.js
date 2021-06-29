@@ -13,9 +13,9 @@ export default (props) => {
   const userStatus = useSelector((state) => state.users.loggedIn);
 
   if (!userStatus) {
-    renderedPost = posts.filter((post) => post.published).slice(0, 5);
+    renderedPost = posts.filter((post) => post.published);
   } else {
-    renderedPost = posts.slice(0, 5);
+    renderedPost = posts;
   }
 
   useEffect(() => {

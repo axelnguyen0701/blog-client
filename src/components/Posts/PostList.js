@@ -1,22 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ListGroup, Col, Tab, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../features/posts/postsSlice";
 //eslint-disable-next-line
-export default (props) => {
+export default () => {
   const posts = useSelector((state) => state.posts.posts);
-  let renderedPost = [];
+  const [renderedPost, setRenderedPost] = useState([]);
   const dispatch = useDispatch();
 
   const postStatus = useSelector((state) => state.posts.status);
-  const userStatus = useSelector((state) => state.users.loggedIn);
+  const currentUser = useSelector((state) => state.users.currentUser);
 
-  if (!userStatus) {
-    renderedPost = posts.filter((post) => post.published);
-  } else {
-    renderedPost = posts;
-  }
+  useEffect(() => {
+    if (currentUser === "") {
+      setRenderedPost(posts.filter((post) => post.published));
+    } else {
+      setRenderedPost(posts);
+    }
+  }, [currentUser, posts]);
 
   useEffect(() => {
     if (postStatus === "idle") {

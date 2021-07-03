@@ -1,19 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Navbar, Container, Nav, Button } from "react-bootstrap";
+import {
+  Navbar,
+  Container,
+  Nav,
+  Button,
+  Dropdown,
+  NavItem,
+  NavLink,
+} from "react-bootstrap";
 import { useHistory } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { userLoggedIn } from "../features/users/usersSlice";
+import { userLoggedOut } from "../features/users/usersSlice";
 //eslint-disable-next-line
 export default () => {
   const history = useHistory();
   const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
+  const currentUser = useSelector((state) => state.users.currentUser);
   const dispatch = useDispatch();
   const onLoggedOut = () => {
     if (userLoggedInStatus) {
       localStorage.setItem("user_token", "");
       history.push("/");
-      dispatch(userLoggedIn({ loggedIn: false }));
+      dispatch(userLoggedOut());
     }
   };
 
@@ -21,14 +30,21 @@ export default () => {
     if (userLoggedInStatus) {
       return (
         <>
-          <Link to="/posts/new" className="nav-link">
-            New Post
-          </Link>
-          <Link to="/users" className="nav-link">
-            Users
-          </Link>
-          )
-          <Button className="nav-link" onClick={onLoggedOut}>
+          <Dropdown as={NavItem}>
+            <Dropdown.Toggle as={NavLink}>
+              Hi <strong>{currentUser}</strong>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item as={Link} to="/posts/new">
+                Create Post
+              </Dropdown.Item>
+
+              <Dropdown.Item as={Link} to="/users">
+                Users
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          <Button className="nav-link" onClick={onLoggedOut} variant="dark">
             Log Out
           </Button>
         </>

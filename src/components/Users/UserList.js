@@ -6,14 +6,24 @@ import { Link } from "react-router-dom";
 export default (props) => {
   const users = useSelector((state) => state.users.users);
   const dispatch = useDispatch();
-
-  const userStatus = useSelector((state) => state.users.status);
-
+  const error = useSelector((state) => state.users.error);
+  const userStatus = useSelector((state) => state.users.fetchStatus);
+  const userLoggedIn = useSelector((state) => state.users.loggedIn);
   useEffect(() => {
-    if (userStatus === "idle") {
+    if (userStatus === "idle" && userLoggedIn) {
       dispatch(fetchUsers());
     }
-  }, [userStatus, dispatch]);
+  }, [userStatus, dispatch, userLoggedIn]);
+  if (!userLoggedIn) {
+    return (
+      <div>
+        You must <Link to="/log-in">login</Link> to see this
+      </div>
+    );
+  }
+  if (userStatus === "failed") {
+    return <div>{error}</div>;
+  }
 
   const renderedUserList = users.map((user) => (
     <li key={user._id}>

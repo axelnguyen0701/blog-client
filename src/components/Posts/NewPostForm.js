@@ -15,6 +15,7 @@ export default () => {
   const onSubmit = (values) => {
     if (!values.title) return { title: "Required" };
     if (!values.content) return { content: "Required" };
+    console.log(values.content);
     const requestData = {
       title: values.title,
       content: values.content,

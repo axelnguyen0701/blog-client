@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { deletePost } from "../../features/posts/postsSlice";
+import { fetchPosts } from "../../features/posts/postsSlice";
 import CommentShow from "../Comments/CommentShow";
+import CommentForm from "../Comments/NewCommentForm";
+
 //eslint-disable-next-line
 export default ({ match }) => {
   const { postId } = match.params;
@@ -14,13 +17,27 @@ export default ({ match }) => {
   const post = useSelector((state) =>
     state.posts.posts.find((post) => post.id === postId)
   );
-  const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
+  const currentUser = useSelector((state) => state.users.currentUser);
   //   const userLoggedInStatus = useSelector((state) => state.users.loggedIn);
   const postStatus = useSelector((state) => state.posts.status);
+
+  useEffect(() => {
+    if (postStatus === "idle") {
+      dispatch(fetchPosts());
+    }
+  }, [postStatus, dispatch]);
+
   const onDeleteClick = () => {
     dispatch(deletePost({ id: postId }));
     history.push("/");
   };
+  if (postStatus === "loading" || postStatus === "idle") {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    );
+  }
 
   if (!post) {
     return (
@@ -30,36 +47,51 @@ export default ({ match }) => {
     );
   }
 
-  if (postStatus === "loading") {
-    return (
-      <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    );
-  }
+  const renderButtons = () => {
+    if (currentUser === "axelnguyen0701") {
+      return (
+        <span className="ml-auto">
+          <Link to={`${post.url}/edit`} className="btn btn-secondary mr-2">
+            Edit
+          </Link>
+          <Button variant="danger" onClick={onDeleteClick}>
+            Delete
+          </Button>
+        </span>
+      );
+    }
+  };
 
   return (
     <>
       <section>
         <article className="post">
-          <h2>{post.title}</h2>
-          {userLoggedInStatus ? (
-            <div className="mt-2">
-              <Link to={`${post.url}/edit`} className="btn btn-primary mr-2">
-                Edit
-              </Link>
-              <Button variant="danger" onClick={onDeleteClick}>
-                Delete
-              </Button>
-            </div>
-          ) : null}
-
+          <div className="d-flex">
+            <h1 className="d-inline mr-3">{post.title}</h1>
+            {renderButtons()}
+          </div>
+          <div className="text-muted float-right">
+            on {post.formatted_date} by{" "}
+            <em>
+              <strong>
+                <Link to={post.author.url}>{post.author.username}</Link>
+              </strong>
+            </em>
+          </div>
+          <br />
           <p>{post.content}</p>
         </article>
       </section>
       <section>
-        <h1>Comments</h1>
-        <CommentShow postId={postId} />
+        <h3>Comments</h3>
+        <Row>
+          <Col lg={6}>
+            <CommentShow postId={postId} />
+          </Col>
+          <Col lg={6}>
+            <CommentForm postId={postId} />
+          </Col>
+        </Row>
       </section>
     </>
   );

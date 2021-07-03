@@ -54,7 +54,6 @@ export const postsSlice = createSlice({
       state.status = "loading";
     },
     [fetchPosts.fulfilled]: (state, action) => {
-      console.log("hello");
       state.status = "succeeded";
       state.posts = state.posts.concat(action.payload);
     },

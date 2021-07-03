@@ -6,14 +6,18 @@ const initialState = {
   status: "idle",
   error: null,
   loggedIn: false,
+  currentUser: "",
+  fetchStatus: "idle",
 };
 
-export const fetchUsers = createAsyncThunk("posts/fetchUsers", async () => {
-  const res = await client.get("/users", {
-    headers: {
-      authorization: `bearer ${localStorage.getItem("user_token")}`,
-    },
-  });
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const res = await client.get("/users");
+  return res.data;
+});
+
+export const loginUser = createAsyncThunk("users/loginUser", async (data) => {
+  const res = await client.post("/auth/login", data);
+  localStorage.setItem("user_token", res.data.token);
   return res.data;
 });
 
@@ -21,29 +25,40 @@ export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    userLoggedIn(state, action) {
-      if (!action.payload.loggedIn) {
-        state.status = "idle";
-        state.users = [];
-      }
-      state.loggedIn = action.payload.loggedIn;
+    userLoggedOut: {
+      reducer(state, action) {
+        state.loggedIn = false;
+        state.currentUser = "";
+      },
     },
   },
   extraReducers: {
     [fetchUsers.pending]: (state, action) => {
-      state.status = "loading";
+      state.fetchStatus = "loading";
     },
     [fetchUsers.fulfilled]: (state, action) => {
-      state.status = "succeeded";
+      state.fetchStatus = "succeeded";
 
       state.users = state.users.concat(action.payload);
     },
     [fetchUsers.rejected]: (state, action) => {
+      state.fetchStatus = "failed";
+      state.error = action.error.msg;
+    },
+    [loginUser.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [loginUser.fulfilled]: (state, action) => {
+      state.status = "succeeded";
+      state.loggedIn = true;
+
+      state.currentUser = action.payload.user.username;
+    },
+    [loginUser.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.error.msg;
     },
   },
 });
-
-export const { userLoggedIn, userLoggedOut } = usersSlice.actions;
+export const { userLoggedOut } = usersSlice.actions;
 export default usersSlice.reducer;
